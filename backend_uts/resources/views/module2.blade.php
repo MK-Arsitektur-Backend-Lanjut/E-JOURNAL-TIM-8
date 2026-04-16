@@ -375,14 +375,14 @@
             documents.forEach(doc => {
                 const card = document.createElement('div');
                 card.className = 'document-card';
-                card.innerHTML = \`
-                    <div class="doc-title">\${doc.title || 'Untitled Document'}</div>
+                card.innerHTML = `
+                    <div class="doc-title">${doc.title || 'Untitled Document'}</div>
                     <div class="doc-meta">
-                        <span>👤 \${doc.author || 'Unknown'}</span>
-                        <span>📅 \${doc.year || 'N/A'}</span>
+                        <span>👤 ${doc.author || 'Unknown'}</span>
+                        <span>📅 ${doc.year || 'N/A'}</span>
                     </div>
-                    <div class="doc-abstract">\${doc.abstract || 'No abstract available.'}</div>
-                \`;
+                    <div class="doc-abstract">${doc.abstract || 'No abstract available.'}</div>
+                `;
                 resultsList.appendChild(card);
             });
         }
