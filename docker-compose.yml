@@ -1,0 +1,132 @@
+services:
+
+  # ── NGINX — Web Server ─────────────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: ejournal_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - ejournal_network
+
+  # ── APP — Laravel PHP-FPM ──────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ejournal_app
+    env_file: .env.docker
+    volumes:
+      - .:/var/www/html
+      - ./storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ejournal_network
+
+  # ── MYSQL — Database ───────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: ejournal_mysql
+    environment:
+      MYSQL_DATABASE: ejournal
+      MYSQL_USER: ejournal_user
+      MYSQL_PASSWORD: ejournal_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ejournal_network
+
+  # ── REDIS — Cache & Queue ──────────────────────────────────────────────────
+  # Digunakan untuk:
+  # 1. Cache isValidForDownload() → akses simultan metadata + download
+  # 2. Queue worker → pengiriman email notifikasi di background
+  redis:
+    image: redis:alpine
+    container_name: ejournal_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ejournal_network
+
+  # ── QUEUE WORKER — Proses antrian email ───────────────────────────────────
+  # Mengirim email SubscriptionActivated & SubscriptionExpiringSoon
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ejournal_queue
+    env_file: .env.docker
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=60
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - ejournal_network
+    restart: unless-stopped
+
+  # ── SCHEDULER — Cron Laravel ───────────────────────────────────────────────
+  # Menjalankan:
+  # - 00:00 → subscriptions:expire
+  # - 08:00 → subscriptions:send-reminders --days=7
+  # - 08:00 → subscriptions:send-reminders --days=3
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ejournal_scheduler
+    env_file: .env.docker
+    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - app
+      - redis
+    networks:
+      - ejournal_network
+    restart: unless-stopped
+
+  # ── MAILPIT — Mail Catcher (Development) ──────────────────────────────────
+  # Tangkap semua email yang dikirim tanpa benar-benar mengirimnya.
+  # Buka http://localhost:8025 untuk melihat inbox.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: ejournal_mailpit
+    ports:
+      - "8025:8025"   # Web UI
+      - "1025:1025"   # SMTP
+    networks:
+      - ejournal_network
+
+# ── VOLUMES ────────────────────────────────────────────────────────────────
+volumes:
+  mysql_data:
+    driver: local
+
+# ── NETWORKS ───────────────────────────────────────────────────────────────
+networks:
+  ejournal_network:
+    driver: bridge
