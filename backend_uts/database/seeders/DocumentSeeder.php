@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Author;
+use App\Models\Document;
+use App\Models\Tag;
 use Illuminate\Database\Seeder;
 
 class DocumentSeeder extends Seeder
@@ -12,6 +14,24 @@ class DocumentSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Document::factory()->count(10000)->create();
+        $authorIds = Author::query()->pluck('id')->all();
+        $tagIds = Tag::query()->pluck('id')->all();
+
+        Document::factory()
+            ->count(10000)
+            ->state(function () use ($authorIds): array {
+                return [
+                    'author_id' => empty($authorIds) ? null : fake()->randomElement($authorIds),
+                ];
+            })
+            ->create()
+            ->each(function (Document $document) use ($tagIds): void {
+                if (empty($tagIds)) {
+                    return;
+                }
+
+                $picked = fake()->randomElements($tagIds, random_int(1, min(3, count($tagIds))));
+                $document->tags()->sync($picked);
+            });
     }
 }

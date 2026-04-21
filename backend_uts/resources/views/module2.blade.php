@@ -378,7 +378,7 @@
                 card.innerHTML = \`
                     <div class="doc-title">\${doc.title || 'Untitled Document'}</div>
                     <div class="doc-meta">
-                        <span>👤 \${doc.author || 'Unknown'}</span>
+                        <span>👤 \${(doc.author && doc.author.name) ? doc.author.name : (doc.author || 'Unknown')}</span>
                         <span>📅 \${doc.year || 'N/A'}</span>
                     </div>
                     <div class="doc-abstract">\${doc.abstract || 'No abstract available.'}</div>

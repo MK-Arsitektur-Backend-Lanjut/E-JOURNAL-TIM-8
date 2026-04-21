@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            AuthorSeeder::class,
+            TagSeeder::class,
             DocumentSeeder::class,
         ]);
     }

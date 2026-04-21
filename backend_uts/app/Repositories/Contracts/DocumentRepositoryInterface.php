@@ -5,27 +5,37 @@ namespace App\Repositories\Contracts;
 interface DocumentRepositoryInterface
 {
     /**
-     * Search documents based on advanced criteria.
-     *
-     * @param array $filters
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * Get paginated list of documents.
      */
-    public function search(array $filters);
+    public function getAll(array $filters = [], int $perPage = 15);
+
+    /**
+     * Find a document by ID.
+     */
+    public function findById(int $id);
+
+    /**
+     * Create a new document.
+     */
+    public function create(array $data);
+
+    /**
+     * Update an existing document by ID.
+     */
+    public function update(int $id, array $data);
+
+    /**
+     * Delete a document by ID.
+     */
+    public function delete(int $id): bool;
+
+    /**
+     * Search documents based on advanced criteria.
+     */
+    public function search(array $filters, int $perPage = 15);
 
     /**
      * Get related documents recommendations based on a document ID.
-     *
-     * @param int $documentId
-     * @param int $limit
-     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getRecommendations(int $documentId, int $limit = 5);
-
-    /**
-     * Get a single document by ID.
-     *
-     * @param int $id
-     * @return \App\Models\Document|null
-     */
-    public function find(int $id);
 }
