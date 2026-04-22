@@ -19,11 +19,10 @@ class DocumentFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(6),
-            'author' => $this->faker->name(),
-            'year' => $this->faker->year(),
-            'abstract' => $this->faker->paragraph(3),
-            'tags' => $this->faker->randomElements(['technology', 'science', 'history', 'art', 'business', 'medicine', 'engineering', 'literature'], 3),
-            'file_path' => 'dummy_assets/sample.pdf',
+            'abstract' => $this->faker->paragraphs(2, true),
+            'year' => $this->faker->numberBetween(1990, (int) date('Y')),
+            'file_path' => 'documents/dummy_' . $this->faker->unique()->numberBetween(1, 100000) . '.pdf',
+            'author_id' => null,
         ];
     }
 }

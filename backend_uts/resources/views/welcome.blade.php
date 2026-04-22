@@ -205,13 +205,13 @@
 
         <div class="modules-grid">
             <!-- Module 1 -->
-            <div class="module-card inactive">
-                <div class="status-badge wip">Locked</div>
-                <div class="module-icon">👥</div>
-                <h2 class="module-title">Module 1 : User Auth</h2>
-                <p class="module-desc">Authentication, authorization, and student/lecturer account management system.</p>
-                <div class="module-btn">Coming Soon</div>
-            </div>
+            <a href="/module1" class="module-card active">
+                <div class="status-badge ready">Online</div>
+                <div class="module-icon">📚</div>
+                <h2 class="module-title">Module 1 : Collection & Metadata</h2>
+                <p class="module-desc">Document catalog CRUD, simulated file upload management, and subject/tag grouping.</p>
+                <div class="module-btn">Launch Module</div>
+            </a>
 
             <!-- Module 2 -->
             <a href="/module2" class="module-card active">

@@ -20,7 +20,9 @@ class AdvancedSearchController extends Controller
     public function search(Request $request)
     {
         $filters = $request->only(['year', 'author', 'abstract', 'title']);
-        $results = $this->repository->search($filters);
+        $perPage = (int) $request->input('per_page', 15);
+        $perPage = $perPage > 0 ? min($perPage, 100) : 15;
+        $results = $this->repository->search($filters, $perPage);
 
         return response()->json([
             'success' => true,
