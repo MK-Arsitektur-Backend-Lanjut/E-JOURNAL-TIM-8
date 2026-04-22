@@ -537,8 +537,8 @@
                 card.innerHTML = `
                     <div class="doc-title">${doc.title || 'Untitled Document'}</div>
                     <div class="doc-meta">
-                        <span>👤 \${(doc.author && doc.author.name) ? doc.author.name : (doc.author || 'Unknown')}</span>
-                        <span>📅 \${doc.year || 'N/A'}</span>
+                        <span>👤 ${doc.author ? (doc.author.name || doc.author) : 'Unknown'}</span>
+                        <span>📅 ${doc.year || 'N/A'}</span>
                     </div>
                     <div class="doc-abstract">${doc.abstract || 'No abstract available.'}</div>
                     <button class="btn-recommend" onclick="loadRecommendations(${doc.id}, this)">View Related Journals</button>
@@ -574,7 +574,7 @@
                                 <div class="rec-item-meta">
                                     <span>Year: ${rec.year || '-'}</span> 
                                     <span style="color:var(--text-muted);">|</span>
-                                    <span>${rec.author || 'Anonymous'}</span>
+                                    <span>${rec.author ? (rec.author.name || rec.author) : 'Anonymous'}</span>
                                 </div>
                             </div>
                         `;
