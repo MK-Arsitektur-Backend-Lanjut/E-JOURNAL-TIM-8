@@ -12,7 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+<<<<<<< Updated upstream
         //
+=======
+        $middleware->statefulApi();
+        
+        $middleware->alias([
+            'subscription.access' => \App\Http\Middleware\CheckSubscriptionAccess::class,
+        ]);
+>>>>>>> Stashed changes
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

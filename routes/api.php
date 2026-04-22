@@ -6,6 +6,7 @@ use App\Http\Controllers\AdvancedSearchController;
 use App\Http\Controllers\CatalogLookupController;
 use App\Http\Controllers\DocumentController;
 
+<<<<<<< Updated upstream
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -21,3 +22,9 @@ Route::prefix('v1')->group(function () {
     Route::put('/documents/{id}', [DocumentController::class, 'update']);
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy']);
 });
+=======
+require __DIR__ . '/api/auth.php';
+require __DIR__ . '/api/membership.php';
+require __DIR__ . '/api/journals.php';
+require __DIR__ . '/api/documents.php';
+>>>>>>> Stashed changes
