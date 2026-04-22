@@ -384,13 +384,8 @@
 <body>
 
     <nav class="top-nav">
-<<<<<<< Updated upstream
-        <a href="/" class="back-btn">
-            &larr; Back to Portal
-=======
         <a href="/dashboard" class="back-btn">
             &larr; Back to Dashboard
->>>>>>> Stashed changes
         </a>
     </nav>
 

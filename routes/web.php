@@ -1,19 +1,8 @@
 <?php
 
+use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< Updated upstream
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/module1', function () {
-    return view('module1');
-});
-
-Route::get('/module2', function () {
-    return view('module2');
-=======
 /*
 |--------------------------------------------------------------------------
 | Web Routes — E-Journal
@@ -43,5 +32,4 @@ Route::middleware('auth')->group(function () {
 
     // Batalkan langganan (Route Model Binding — Laravel inject Subscription otomatis)
     Route::patch('/subscription/{subscription}/cancel', [PageController::class, 'cancelSubscription'])->name('subscription.cancel');
->>>>>>> Stashed changes
 });
