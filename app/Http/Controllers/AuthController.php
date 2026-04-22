@@ -9,13 +9,6 @@ use Illuminate\Http\Request;
 
 /**
  * AuthController — Sangat tipis.
- *
- * Tugas controller ini hanya 3 hal:
- * 1. Terima HTTP Request
- * 2. Panggil AuthService (yang pegang semua logika)
- * 3. Kembalikan HTTP Response (JSON)
- *
- * Tidak ada logika bisnis, tidak ada query DB, tidak ada Hash::check().
  */
 class AuthController extends Controller
 {

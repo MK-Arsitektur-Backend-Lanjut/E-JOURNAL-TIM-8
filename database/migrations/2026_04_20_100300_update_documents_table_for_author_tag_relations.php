@@ -18,6 +18,7 @@ return new class extends Migration
                 ->constrained('authors')
                 ->nullOnDelete();
 
+            $table->dropIndex(['author']);
             $table->dropColumn(['author', 'tags']);
         });
     }

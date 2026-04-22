@@ -13,14 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 /**
- * PageController — Serve halaman Blade (web, bukan API).
- *
- * Tanggung jawab:
- * - Ambil data dari Service/Repository
- * - Pass data ke View (termasuk computed data agar view bebas logika)
- * - Handle redirect dengan session flash
- *
- * Tidak ada business logic, tidak ada query DB langsung, tidak ada guard manual.
+ * PageController — Serve halaman Blade 
  */
 class PageController extends Controller
 {

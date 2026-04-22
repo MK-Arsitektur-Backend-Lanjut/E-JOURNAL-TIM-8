@@ -55,7 +55,12 @@ class EloquentSubscriptionRepository implements SubscriptionRepositoryInterface
      */
     public function isValidForDownload(int $userId): bool
     {
-        return $this->model
+        $ttl = now()->addMinutes(config('plans.cache_ttl_minutes', 5));
+
+        return Cache::remember(
+            $this->cacheKey($userId, 'valid'),
+            $ttl,
+            fn () => $this->model
                 ->where('user_id', $userId)
                 ->where('status', SubscriptionStatus::Active)
                 ->where('started_at', '<=', now())
@@ -63,7 +68,8 @@ class EloquentSubscriptionRepository implements SubscriptionRepositoryInterface
                     ->whereNull('expires_at')
                     ->orWhere('expires_at', '>=', now())
                 )
-                ->exists();
+                ->exists()
+        );
     }
 
     /**
@@ -74,7 +80,12 @@ class EloquentSubscriptionRepository implements SubscriptionRepositoryInterface
      */
     public function findActiveByUser(int $userId): ?Subscription
     {
-        return $this->model
+        $ttl = now()->addMinutes(config('plans.cache_ttl_minutes', 5));
+
+        return Cache::remember(
+            $this->cacheKey($userId, 'active'),
+            $ttl,
+            fn () => $this->model
                 ->where('user_id', $userId)
                 ->where('status', SubscriptionStatus::Active)
                 ->where('started_at', '<=', now())
@@ -83,7 +94,8 @@ class EloquentSubscriptionRepository implements SubscriptionRepositoryInterface
                     ->orWhere('expires_at', '>=', now())
                 )
                 ->latest('started_at')
-                ->first();
+                ->first()
+        );
     }
 
     /**
