@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Eloquent;
 
 use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
-use App\Repositories\Interfaces\SubscriptionRepositoryInterface;
+use App\Repositories\Contracts\SubscriptionRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 

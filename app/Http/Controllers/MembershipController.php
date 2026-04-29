@@ -6,7 +6,7 @@ use App\Http\Requests\ExtendSubscriptionRequest;
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Resources\SubscriptionResource;
 use App\Models\Subscription;
-use App\Repositories\Interfaces\SubscriptionRepositoryInterface;
+use App\Repositories\Contracts\SubscriptionRepositoryInterface;
 use App\Services\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

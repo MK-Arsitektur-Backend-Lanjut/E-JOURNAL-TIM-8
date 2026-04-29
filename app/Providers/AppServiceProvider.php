@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Models\Subscription;
 use App\Policies\SubscriptionPolicy;
-use App\Repositories\EloquentSubscriptionRepository;
-use App\Repositories\Interfaces\SubscriptionRepositoryInterface;
+use App\Repositories\Eloquent\EloquentSubscriptionRepository;
+use App\Repositories\Contracts\SubscriptionRepositoryInterface;
 use App\Services\AuthService;
 use App\Services\SubscriptionService;
 use Illuminate\Support\Facades\Gate;

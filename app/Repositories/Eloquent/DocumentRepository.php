@@ -95,9 +95,7 @@ class DocumentRepository implements DocumentRepositoryInterface
         return (bool) $document->delete();
     }
 
-    /**
-     * Backward-compatible search used by existing controller.
-     */
+
     public function search(array $filters, int $perPage = 15)
     {
         $query = $this->model->newQuery()->with(['author', 'tags']);
@@ -123,9 +121,7 @@ class DocumentRepository implements DocumentRepositoryInterface
         return $query->paginate($perPage);
     }
 
-    /**
-     * Backward-compatible recommendations using tag relation.
-     */
+
     public function getRecommendations(int $documentId, int $limit = 5)
     {
         $document = $this->model->with('tags')->find($documentId);
@@ -142,6 +138,11 @@ class DocumentRepository implements DocumentRepositoryInterface
             ->whereHas('tags', function ($q) use ($tagIds) {
                 $q->whereIn('tags.id', $tagIds);
             })
+            ->withCount(['tags as shared_tags_count' => function ($q) use ($tagIds) {
+                $q->whereIn('tags.id', $tagIds);
+            }])
+            ->orderByDesc('shared_tags_count')
+            ->orderByRaw('ABS(year - ?) ASC', [$document->year])
             ->limit($limit)
             ->get();
     }
