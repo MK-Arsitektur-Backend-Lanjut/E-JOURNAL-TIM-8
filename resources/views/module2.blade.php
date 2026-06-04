@@ -541,7 +541,10 @@
                         <span>📅 ${doc.year || 'N/A'}</span>
                     </div>
                     <div class="doc-abstract">${doc.abstract || 'No abstract available.'}</div>
-                    <button class="btn-recommend" onclick="loadRecommendations(${doc.id}, this)">View Related Journals</button>
+                    <div style="display:flex; gap:0.5rem;">
+                        <a href="/module2/${doc.id}" class="btn-recommend" style="text-decoration:none; display:inline-block; border-color: #c084fc; color: #c084fc;">Read Full Details</a>
+                        <button class="btn-recommend" onclick="loadRecommendations(${doc.id}, this)">View Related Journals</button>
+                    </div>
                     <div class="recs-container"></div>
                 `;
                 resultsList.appendChild(card);
@@ -549,7 +552,7 @@
         }
 
         async function loadRecommendations(docId, btn) {
-            const container = btn.nextElementSibling;
+            const container = btn.parentElement.nextElementSibling;
             if (container.style.display === 'block') {
                 container.style.display = 'none';
                 btn.innerHTML = 'View Related Journals';
@@ -569,14 +572,14 @@
                     
                     result.data.forEach(rec => {
                         html += `
-                            <div class="rec-item">
+                            <a href="/module2/${rec.id}" class="rec-item" style="text-decoration:none;">
                                 <div class="rec-item-title">${rec.title}</div>
                                 <div class="rec-item-meta">
                                     <span>Year: ${rec.year || '-'}</span> 
                                     <span style="color:var(--text-muted);">|</span>
                                     <span>${rec.author ? (rec.author.name || rec.author) : 'Anonymous'}</span>
                                 </div>
-                            </div>
+                            </a>
                         `;
                     });
                     html += '</div>';

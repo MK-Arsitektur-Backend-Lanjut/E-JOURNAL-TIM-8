@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Repositories\Interfaces\SubscriptionRepositoryInterface;
+use App\Repositories\Contracts\SubscriptionRepositoryInterface;
 use Illuminate\Console\Command;
 
 class ExpireSubscriptions extends Command
