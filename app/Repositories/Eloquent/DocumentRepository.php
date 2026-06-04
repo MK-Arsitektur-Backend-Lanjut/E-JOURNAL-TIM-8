@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Document;
 use App\Repositories\Contracts\DocumentRepositoryInterface;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 
 class DocumentRepository implements DocumentRepositoryInterface
 {
@@ -13,6 +14,16 @@ class DocumentRepository implements DocumentRepositoryInterface
     public function __construct(Document $model)
     {
         $this->model = $model;
+    }
+
+    /**
+     * Clear document cache if Cache store supports tags.
+     */
+    private function clearCache(): void
+    {
+        if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
+            Cache::tags(['documents'])->flush();
+        }
     }
 
     public function getAll(array $filters = [], int $perPage = 15)
@@ -59,6 +70,8 @@ class DocumentRepository implements DocumentRepositoryInterface
             $document->tags()->sync($tagIds);
         }
 
+        $this->clearCache();
+
         return $document->load(['author', 'tags']);
     }
 
@@ -79,6 +92,8 @@ class DocumentRepository implements DocumentRepositoryInterface
             $document->tags()->sync($tagIds);
         }
 
+        $this->clearCache();
+
         return $document->fresh()->load(['author', 'tags']);
     }
 
@@ -92,11 +107,30 @@ class DocumentRepository implements DocumentRepositoryInterface
 
         $document->tags()->detach();
 
-        return (bool) $document->delete();
+        $deleted = (bool) $document->delete();
+
+        $this->clearCache();
+
+        return $deleted;
     }
 
 
     public function search(array $filters, int $perPage = 15)
+    {
+        $page = request()->get('page', 1);
+        $cacheKey = 'documents.search.' . md5(json_encode($filters) . '_' . $perPage . '_' . $page);
+        $ttl = 1800; // 30 minutes
+
+        $retrieveData = fn () => $this->executeSearch($filters, $perPage);
+
+        if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
+            return Cache::tags(['documents'])->remember($cacheKey, $ttl, $retrieveData);
+        }
+
+        return Cache::remember($cacheKey, $ttl, $retrieveData);
+    }
+
+    protected function executeSearch(array $filters, int $perPage = 15)
     {
         $query = $this->model->newQuery()->with(['author', 'tags']);
 
@@ -123,6 +157,20 @@ class DocumentRepository implements DocumentRepositoryInterface
 
 
     public function getRecommendations(int $documentId, int $limit = 5)
+    {
+        $cacheKey = "documents.recommendations.{$documentId}.limit.{$limit}";
+        $ttl = 1800; // 30 minutes
+
+        $retrieveData = fn () => $this->executeGetRecommendations($documentId, $limit);
+
+        if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
+            return Cache::tags(['documents'])->remember($cacheKey, $ttl, $retrieveData);
+        }
+
+        return Cache::remember($cacheKey, $ttl, $retrieveData);
+    }
+
+    protected function executeGetRecommendations(int $documentId, int $limit = 5)
     {
         $document = $this->model->with('tags')->find($documentId);
 
