@@ -3,6 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Subscription;
+use App\Models\Document;
+use App\Models\Author;
+use App\Models\Tag;
+use App\Observers\DocumentObserver;
+use App\Observers\AuthorObserver;
+use App\Observers\TagObserver;
 use App\Policies\SubscriptionPolicy;
 use App\Repositories\Eloquent\EloquentSubscriptionRepository;
 use App\Repositories\Contracts\SubscriptionRepositoryInterface;
@@ -15,19 +21,10 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * Di sinilah "jembatan" antara Interface dan Implementasi didaftarkan.
-     * Setiap kali Laravel Container melihat SubscriptionRepositoryInterface
-     * di constructor manapun, ia akan otomatis meng-inject
-     * EloquentSubscriptionRepository sebagai implementasinya.
-     *
-     * Manfaat: Jika suatu saat ingin ganti ke implementasi lain
-     * (misal: CacheSubscriptionRepository), cukup ubah di SINI SAJA —
-     * tidak perlu menyentuh Controller atau class lain sama sekali.
      */
     public function register(): void
     {
-        // Repository binding — swap implementasi tanpa ubah controller/service
+        // Repository binding
         $this->app->bind(
             SubscriptionRepositoryInterface::class,
             EloquentSubscriptionRepository::class,
@@ -38,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Eloquent\DocumentRepository::class,
         );
 
-        // Service binding — singleton agar tidak buat instance baru tiap request
+        // Service binding
         $this->app->singleton(SubscriptionService::class);
         $this->app->singleton(AuthService::class);
     }
@@ -48,7 +45,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Daftarkan SubscriptionPolicy agar authorize() di Controller berfungsi
+        // Daftarkan SubscriptionPolicy
         Gate::policy(Subscription::class, SubscriptionPolicy::class);
+
+        // 🔄 Daftarkan Observers untuk automatic cache invalidation
+        Document::observe(DocumentObserver::class);
+        Author::observe(AuthorObserver::class);
+        Tag::observe(TagObserver::class);
     }
 }

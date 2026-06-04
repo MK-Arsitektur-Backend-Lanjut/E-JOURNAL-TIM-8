@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\DocumentRepositoryInterface;
+use App\Services\CacheService;
 
 class AdvancedSearchController extends Controller
 {
@@ -16,6 +17,7 @@ class AdvancedSearchController extends Controller
 
     /**
      * Advanced Search API (year, author, abstract)
+     * ⚠️ Search hasil tidak di-cache karena banyak variasi filter
      */
     public function search(Request $request)
     {
@@ -32,10 +34,13 @@ class AdvancedSearchController extends Controller
 
     /**
      * Get recommendations for a document
+     * ✅ Cache recommendations - expensive query, static untuk dokumen tertentu
      */
     public function recommendations($id)
     {
-        $recommendations = $this->repository->getRecommendations($id);
+        $recommendations = CacheService::getRecommendations($id, function () use ($id) {
+            return $this->repository->getRecommendations($id);
+        });
 
         return response()->json([
             'success' => true,
