@@ -17,29 +17,31 @@ class DocumentRepository implements DocumentRepositoryInterface
 
     public function getAll(array $filters = [], int $perPage = 15)
     {
-        $query = $this->model->newQuery()->with(['author', 'tags']);
+        $query = $this->model->newQuery()
+            ->with(['author', 'tags'])
+            ->select('documents.*');
 
         if (!empty($filters['year'])) {
-            $query->where('year', (int) $filters['year']);
+            $query->where('documents.year', (int) $filters['year']);
         }
 
         if (!empty($filters['title'])) {
-            $query->where('title', 'like', '%' . $filters['title'] . '%');
+            $query->where('documents.title', 'like', $filters['title'] . '%');
         }
 
         if (!empty($filters['author'])) {
             $query->whereHas('author', function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['author'] . '%');
+                $q->where('authors.name', 'like', $filters['author'] . '%');
             });
         }
 
         if (!empty($filters['tag'])) {
             $query->whereHas('tags', function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['tag'] . '%');
+                $q->where('tags.name', '=', $filters['tag']);
             });
         }
 
-        return $query->latest()->paginate($perPage);
+        return $query->latest('documents.created_at')->paginate($perPage);
     }
 
     public function findById(int $id)
@@ -95,37 +97,35 @@ class DocumentRepository implements DocumentRepositoryInterface
         return (bool) $document->delete();
     }
 
-    /**
-     * Backward-compatible search used by existing controller.
-     */
+
     public function search(array $filters, int $perPage = 15)
     {
-        $query = $this->model->newQuery()->with(['author', 'tags']);
+        $query = $this->model->newQuery()
+            ->with(['author', 'tags'])
+            ->select('documents.*');
 
         if (!empty($filters['year'])) {
-            $query->where('year', (int) $filters['year']);
+            $query->where('documents.year', (int) $filters['year']);
         }
 
         if (!empty($filters['author'])) {
             $query->whereHas('author', function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['author'] . '%');
+                $q->where('authors.name', 'like', $filters['author'] . '%');
             });
         }
 
         if (!empty($filters['abstract'])) {
-            $query->where('abstract', 'like', '%' . $filters['abstract'] . '%');
+            $query->where('documents.abstract', 'like', '%' . $filters['abstract'] . '%');
         }
 
         if (!empty($filters['title'])) {
-            $query->where('title', 'like', '%' . $filters['title'] . '%');
+            $query->where('documents.title', 'like', $filters['title'] . '%');
         }
 
-        return $query->paginate($perPage);
+        return $query->latest('documents.created_at')->paginate($perPage);
     }
 
-    /**
-     * Backward-compatible recommendations using tag relation.
-     */
+
     public function getRecommendations(int $documentId, int $limit = 5)
     {
         $document = $this->model->with('tags')->find($documentId);
@@ -135,13 +135,19 @@ class DocumentRepository implements DocumentRepositoryInterface
         }
 
         $tagIds = $document->tags->pluck('id')->all();
+        $documentYear = $document->year;
 
         return $this->model
             ->with(['author', 'tags'])
-            ->where('id', '!=', $documentId)
-            ->whereHas('tags', function ($q) use ($tagIds) {
-                $q->whereIn('tags.id', $tagIds);
-            })
+            ->select('documents.*')
+            ->where('documents.id', '!=', $documentId)
+            ->join('document_tag', 'documents.id', '=', 'document_tag.document_id')
+            ->whereIn('document_tag.tag_id', $tagIds)
+            ->selectRaw('COUNT(document_tag.tag_id) as shared_tags_count')
+            ->selectRaw('ABS(documents.year - ?) as year_difference', [$documentYear])
+            ->groupBy('documents.id')
+            ->orderByDesc('shared_tags_count')
+            ->orderBy('year_difference')
             ->limit($limit)
             ->get();
     }
