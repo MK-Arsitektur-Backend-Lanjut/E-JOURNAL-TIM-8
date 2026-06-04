@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\Contracts\DocumentRepositoryInterface;
+use App\Services\CacheService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -19,6 +20,8 @@ class DocumentController extends Controller
         $perPage = (int) request()->input('per_page', 15);
         $perPage = $perPage > 0 ? min($perPage, 100) : 15;
 
+        // ⚠️ Cache tidak digunakan untuk list dengan banyak filter variasi
+        // Alternatif: cache per kombinasi filter, tapi kompleks
         $documents = $this->repository->getAll($filters, $perPage);
 
         return response()->json([
@@ -29,7 +32,10 @@ class DocumentController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $document = $this->repository->findById($id);
+        // ✅ Cache single document - high traffic, jarang berubah
+        $document = CacheService::getDocument($id, function () use ($id) {
+            return $this->repository->findById($id);
+        });
 
         if (!$document) {
             return response()->json([
@@ -61,6 +67,9 @@ class DocumentController extends Controller
         }
 
         $document = $this->repository->create($validated);
+
+        // 🔄 Invalidate recommendations cache karena ada dokumen baru
+        CacheService::invalidateAllRecommendations();
 
         return response()->json([
             'success' => true,
@@ -106,6 +115,9 @@ class DocumentController extends Controller
             ], 404);
         }
 
+        // 🔄 Invalidate cache untuk dokumen ini
+        CacheService::invalidateDocument($id);
+
         return response()->json([
             'success' => true,
             'message' => 'Document updated successfully.',
@@ -123,6 +135,9 @@ class DocumentController extends Controller
                 'message' => 'Document not found.',
             ], 404);
         }
+
+        // 🔄 Invalidate cache untuk dokumen ini
+        CacheService::invalidateDocument($id);
 
         return response()->json([
             'success' => true,
