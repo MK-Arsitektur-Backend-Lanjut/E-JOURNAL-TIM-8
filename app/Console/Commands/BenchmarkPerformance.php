@@ -115,6 +115,43 @@ class BenchmarkPerformance extends Command
             } else {
                 $this->info("Waktu eksekusi sangat cepat (< 0.01 ms).");
             }
+
+            // 100 Users Simulation Benchmark
+            $this->info("\n=== BENCHMARK: SIMULASI 100 USERS (100 HITS) ===");
+            
+            // 1. Tanpa Index (100 Hits)
+            $start100NoIndex = microtime(true);
+            for ($i = 0; $i < 100; $i++) {
+                DB::select("SELECT * FROM documents IGNORE INDEX (idx_documents_author_year) WHERE author_id = ? AND year = ? LIMIT 100", [$targetAuthorId, $targetYear]);
+            }
+            $time100NoIndex = (microtime(true) - $start100NoIndex) * 1000;
+            $this->line("[100 Users] Tanpa Index memakan waktu: " . round($time100NoIndex, 2) . " ms");
+
+            // 2. Dengan Index (100 Hits)
+            $start100Index = microtime(true);
+            for ($i = 0; $i < 100; $i++) {
+                DB::select("SELECT * FROM documents WHERE author_id = ? AND year = ? LIMIT 100", [$targetAuthorId, $targetYear]);
+            }
+            $time100Index = (microtime(true) - $start100Index) * 1000;
+            $this->line("[100 Users] Dengan Index memakan waktu: " . round($time100Index, 2) . " ms");
+            
+            // 3. Redis Caching (100 Hits)
+            $start100Redis = microtime(true);
+            for ($i = 0; $i < 100; $i++) {
+                Cache::store('redis')->get($cacheKey);
+            }
+            $time100Redis = (microtime(true) - $start100Redis) * 1000;
+            $this->line("[100 Users] Mengambil dari Redis (RAM): " . round($time100Redis, 2) . " ms");
+
+            // Perbandingan
+            if ($time100Index > 0) {
+                $speedupIndex = round($time100NoIndex / $time100Index, 1);
+                $this->info("-> Peningkatan Kecepatan Indexing: {$speedupIndex}x lipat lebih cepat!");
+            }
+            if ($time100Redis > 0) {
+                $speedupRedis = round($time100Index / $time100Redis, 1);
+                $this->info("-> Peningkatan Kecepatan Redis vs DB: {$speedupRedis}x lipat lebih cepat!");
+            }
         } catch (\Exception $e) {
             $this->error("Gagal terhubung ke Redis. Pastikan server Redis Anda aktif di localhost:6379.");
             $this->error("Pesan Error: " . $e->getMessage());
