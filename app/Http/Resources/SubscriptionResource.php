@@ -22,7 +22,7 @@ class SubscriptionResource extends JsonResource
             'status_label'   => $this->status->label(),
             'started_at'     => $this->started_at->toDateString(),
             'expires_at'     => $this->expires_at?->toDateString(),
-            'remaining_days' => $this->remainingDays(),
+            'remaining_days' => $this->remaining_days,
             'is_lifetime'    => is_null($this->expires_at),
             'is_active'      => $this->isActive(),
         ];
