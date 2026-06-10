@@ -20,5 +20,5 @@ interface SubscriptionRepositoryInterface
     
     public function extend(int $subscriptionId, int $days, ?string $plan = null): bool;
     
-    public function expireOverdue(): int;
+    public function expireOverdue(): array;
 }

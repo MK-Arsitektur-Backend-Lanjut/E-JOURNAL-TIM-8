@@ -56,7 +56,7 @@ class SubscriptionService
             return [
                 'status'       => 'conflict',
                 'subscription' => $existing,
-                'message'      => "Anda masih memiliki langganan paket '{$existing->plan}' yang aktif (sisa {$existing->remainingDays()} hari). Batalkan terlebih dahulu sebelum berganti ke paket '{$plan}'.",
+                'message'      => "Anda masih memiliki langganan paket '{$existing->plan}' yang aktif (sisa {$existing->remaining_days} hari). Batalkan terlebih dahulu sebelum berganti ke paket '{$plan}'.",
             ];
         }
 

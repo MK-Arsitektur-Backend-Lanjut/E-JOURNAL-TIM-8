@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('plan');
-            $table->timestamp('started_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
+            $table->dateTime('started_at')->nullable();
+            $table->dateTime('expires_at')->nullable();
             $table->string('status')->default('pending');
             $table->text('notes')->nullable();
             $table->softDeletes();

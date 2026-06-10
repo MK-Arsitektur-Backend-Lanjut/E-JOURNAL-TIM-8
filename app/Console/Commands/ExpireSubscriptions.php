@@ -18,7 +18,8 @@ class ExpireSubscriptions extends Command
 
     public function handle(): int
     {
-        $count = $this->subscriptionRepository->expireOverdue();
+        $expiredUsers = $this->subscriptionRepository->expireOverdue();
+        $count = count($expiredUsers);
 
         $this->info("✅ {$count} langganan berhasil ditandai sebagai expired.");
 

@@ -38,7 +38,7 @@ class SubscriptionExpiringSoon extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $remainingDays = $this->subscription->remainingDays();
+        $remainingDays = $this->subscription->remaining_days;
         $expiresAt     = $this->subscription->expires_at->translatedFormat('d F Y');
         $plan          = ucfirst($this->subscription->plan);
 

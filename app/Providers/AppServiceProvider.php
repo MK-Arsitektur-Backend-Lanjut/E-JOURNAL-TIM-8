@@ -24,11 +24,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Repository binding
-        $this->app->bind(
-            SubscriptionRepositoryInterface::class,
-            EloquentSubscriptionRepository::class,
-        );
+        $this->app->singleton(SubscriptionRepositoryInterface::class, function ($app) {
+            return new \App\Repositories\Eloquent\CachedSubscriptionRepository(
+                new \App\Repositories\Eloquent\EloquentSubscriptionRepository(new \App\Models\Subscription()),
+                $app->make(\Illuminate\Contracts\Cache\Repository::class)
+            );
+        });
 
         $this->app->bind(
             \App\Repositories\Contracts\DocumentRepositoryInterface::class,

@@ -65,7 +65,7 @@ class User extends Authenticatable
     /**
      * Langganan aktif user saat ini (yang terakhir dibuat dan berstatus active).
      *
-     * Contoh penggunaan: $user->activeSubscription?->remainingDays()
+     * Contoh penggunaan: $user->activeSubscription?->remaining_days
      */
     public function activeSubscription(): HasOne
     {
