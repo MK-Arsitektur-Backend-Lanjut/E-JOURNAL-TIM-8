@@ -9,6 +9,7 @@ services:
       - ./:/var/www
     depends_on:
       - db
+      - redis
     networks:
       - backend_uts_network
 
@@ -37,6 +38,13 @@ services:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - backend_uts_network
+
+  # Tambahan dari Modul 3
+  redis:
+    image: redis:alpine
+    container_name: backend_uts_redis
     networks:
       - backend_uts_network
 

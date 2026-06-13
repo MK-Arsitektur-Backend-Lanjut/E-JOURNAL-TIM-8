@@ -6,7 +6,7 @@ use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Notifications\SubscriptionActivated;
-use App\Repositories\Interfaces\SubscriptionRepositoryInterface;
+use App\Repositories\Contracts\SubscriptionRepositoryInterface;
 
 /**
  * SubscriptionService — Pusat semua business logic langganan.

@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/search', [PageController::class, 'search'])->name('search');
     Route::get('/module1', function () { return view('module1'); })->name('module1');
     Route::get('/module2', function () { return view('module2'); })->name('module2');
+    Route::get('/module2/{id}', function ($id) { return view('module2_detail', ['id' => $id]); })->name('module2.detail');
 
     // Proses berlangganan dari form web
     Route::post('/subscribe', [PageController::class, 'subscribePost'])->name('subscribe.post');
