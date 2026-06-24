@@ -51,27 +51,28 @@ class CachedSubscriptionRepository implements SubscriptionRepositoryInterface
 
         // Mutex Lock untuk mencegah Cache Stampede (Thundering Herd)
         $lockKey = "lock.subscription.valid.user.{$userId}";
-        $lock = $this->cache->lock($lockKey, 10); // Lock bertahan maksimal 10 detik
+        $lock = $this->cache->lock($lockKey, 5); // Lock bertahan maksimal 5 detik
 
-        try {
-            // Coba dapatkan lock, tunggu maksimal 3 detik (block & wait)
-            if ($lock->block(3)) {
-                if ($this->cache->has($key)) {
-                    return (bool) $this->cache->get($key);
-                }
-
+        // Coba dapatkan lock non-blocking untuk mencegah worker thread starvation
+        if ($lock->get()) {
+            try {
                 $isValid = $this->repository->isValidForDownload($userId);
                 $this->cache->put($key, $isValid, $ttl);
-
                 return $isValid;
+            } catch (\Exception $e) {
+                Log::error("Error in isValidForDownload (locked): " . $e->getMessage());
+            } finally {
+                $lock->release();
             }
-        } catch (\Exception $e) {
-            Log::error("Mutex lock error in isValidForDownload: " . $e->getMessage());
-        } finally {
-            $lock->release();
+        } else {
+            // Jika gagal dapatkan lock, tunggu 50ms siapa tahu proses lain sedang menulis cache
+            usleep(50000);
+            if ($this->cache->has($key)) {
+                return (bool) $this->cache->get($key);
+            }
         }
 
-        // Fallback jika lock gagal didapatkan: langsung query DB agar service tidak hang
+        // Fallback jika masih tidak ada cache: langsung query DB
         return $this->repository->isValidForDownload($userId);
     }
 
@@ -90,23 +91,25 @@ class CachedSubscriptionRepository implements SubscriptionRepositoryInterface
         }
 
         $lockKey = "lock.subscription.active.user.{$userId}";
-        $lock = $this->cache->lock($lockKey, 10);
+        $lock = $this->cache->lock($lockKey, 5);
 
-        try {
-            if ($lock->block(3)) {
-                if ($this->cache->has($key)) {
-                    return $this->cache->get($key);
-                }
-
+        // Coba dapatkan lock non-blocking untuk mencegah worker thread starvation
+        if ($lock->get()) {
+            try {
                 $activeSubscription = $this->repository->findActiveByUser($userId);
                 $this->cache->put($key, $activeSubscription, $ttl);
-
                 return $activeSubscription;
+            } catch (\Exception $e) {
+                Log::error("Error in findActiveByUser (locked): " . $e->getMessage());
+            } finally {
+                $lock->release();
             }
-        } catch (\Exception $e) {
-            Log::error("Mutex lock error in findActiveByUser: " . $e->getMessage());
-        } finally {
-            $lock->release();
+        } else {
+            // Jika gagal dapatkan lock, tunggu 50ms siapa tahu proses lain sedang menulis cache
+            usleep(50000);
+            if ($this->cache->has($key)) {
+                return $this->cache->get($key);
+            }
         }
 
         return $this->repository->findActiveByUser($userId);
