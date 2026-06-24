@@ -19,10 +19,16 @@ class DocumentController extends Controller
         $filters = request()->only(['title', 'year', 'author', 'tag']);
         $perPage = (int) request()->input('per_page', 15);
         $perPage = $perPage > 0 ? min($perPage, 100) : 15;
+        $page    = (int) request()->input('page', 1);
 
-        // ⚠️ Cache tidak digunakan untuk list dengan banyak filter variasi
-        // Alternatif: cache per kombinasi filter, tapi kompleks
-        $documents = $this->repository->getAll($filters, $perPage);
+        // ✅ Cache per kombinasi filter+page+perPage
+        $cacheKey = 'doc:list:' . md5(serialize($filters) . $perPage . $page);
+
+        $documents = \Illuminate\Support\Facades\Cache::remember(
+            $cacheKey,
+            600, // 10 menit
+            fn() => $this->repository->getAll($filters, $perPage)
+        );
 
         return response()->json([
             'success' => true,
