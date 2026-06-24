@@ -1,0 +1,176 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "GET download-access status is 200": {
+                    "fails": 0,
+                    "name": "GET download-access status is 200",
+                    "path": "::GET download-access status is 200",
+                    "id": "6a5704d3d7bf61d2fdc379c2a7a1f876",
+                    "passes": 412
+                },
+                "GET download-access allowed is true": {
+                    "fails": 0,
+                    "name": "GET download-access allowed is true",
+                    "path": "::GET download-access allowed is true",
+                    "id": "a0d361dde28a9ed6db13bf90efb45e09",
+                    "passes": 412
+                },
+                "POST subscribe status is 200, 201 or 409": {
+                    "name": "POST subscribe status is 200, 201 or 409",
+                    "path": "::POST subscribe status is 200, 201 or 409",
+                    "id": "d45593ba49a6f072f8a5a7826658a7f7",
+                    "passes": 102,
+                    "fails": 0
+                },
+                "POST subscribe status is not 500": {
+                    "name": "POST subscribe status is not 500",
+                    "path": "::POST subscribe status is not 500",
+                    "id": "0f2b62e086cc2f96ad174f5d19fd6337",
+                    "passes": 102,
+                    "fails": 0
+                },
+                "GET journals/download status is 200": {
+                    "passes": 412,
+                    "fails": 0,
+                    "name": "GET journals/download status is 200",
+                    "path": "::GET journals/download status is 200",
+                    "id": "4c801c9061e8343c701f0686a8337a1c"
+                },
+                "GET journals/download contains file": {
+                    "path": "::GET journals/download contains file",
+                    "id": "9707e3e74cbb50c44d7c4d08c9469058",
+                    "passes": 412,
+                    "fails": 0,
+                    "name": "GET journals/download contains file"
+                }
+            }
+    },
+    "metrics": {
+        "http_req_connecting": {
+            "max": 6.0619,
+            "p(90)": 1.0424,
+            "p(95)": 1.5857299999999996,
+            "avg": 0.2052587284482758,
+            "min": 0,
+            "med": 0
+        },
+        "vus": {
+            "value": 4,
+            "min": 0,
+            "max": 120
+        },
+        "http_req_receiving": {
+            "avg": 0.15006379310344842,
+            "min": 0,
+            "med": 0,
+            "max": 33.4557,
+            "p(90)": 0.52413,
+            "p(95)": 0.6154249999999999
+        },
+        "http_req_duration": {
+            "avg": 11257.171213362077,
+            "min": 3721.9477,
+            "med": 10731.6163,
+            "max": 24381.3021,
+            "p(90)": 18890.787110000005,
+            "p(95)": 20183.248365,
+            "thresholds": {
+                "p(95)<200": true
+            }
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 24026.9641,
+            "p(90)": 18824.047,
+            "p(95)": 20147.909574999998,
+            "avg": 11200.63989143835,
+            "min": 3721.9477,
+            "med": 10698.6207
+        },
+        "http_req_blocked": {
+            "max": 33.7471,
+            "p(90)": 1.0840600000000005,
+            "p(95)": 1.6902849999999998,
+            "avg": 0.2874758620689657,
+            "min": 0,
+            "med": 0
+        },
+        "http_req_sending": {
+            "min": 0,
+            "med": 0,
+            "max": 9.6319,
+            "p(90)": 0,
+            "p(95)": 0.1974049999999931,
+            "avg": 0.04853771551724139
+        },
+        "http_req_waiting": {
+            "avg": 11256.97261185346,
+            "min": 3721.9477,
+            "med": 10731.6163,
+            "max": 24381.3021,
+            "p(90)": 18890.787110000005,
+            "p(95)": 20183.248365
+        },
+        "iterations": {
+            "count": 514,
+            "rate": 3.5992816469659066
+        },
+        "checks": {
+            "passes": 1852,
+            "fails": 0,
+            "value": 1
+        },
+        "iteration_duration": {
+            "min": 7102.1244,
+            "med": 21354.834150000002,
+            "max": 37137.4121,
+            "p(90)": 33516.52058,
+            "p(95)": 34463.789014999995,
+            "avg": 21864.754619066163
+        },
+        "data_received": {
+            "count": 422498,
+            "rate": 2958.5394888712094
+        },
+        "dropped_iterations": {
+            "count": 2855,
+            "rate": 19.99211887565693
+        },
+        "http_req_failed": {
+            "passes": 52,
+            "fails": 876,
+            "thresholds": {
+                "rate<0.01": true
+            },
+            "value": 0.05603448275862069
+        },
+        "vus_max": {
+            "value": 120,
+            "min": 15,
+            "max": 120
+        },
+        "data_sent": {
+            "rate": 1326.3702993743195,
+            "count": 189414
+        },
+        "http_reqs": {
+            "count": 928,
+            "rate": 6.498313946273076
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        }
+    },
+    "setup_data": {
+        "activeToken": "13|Sg2qZSBc6nXr40xzFKilvB0KyTolzYzHbiTz9BbO7076288d",
+        "writeToken": "14|Z5ORIru24MWb1y12WXcy9KUiHlbmG85m1tRczqJx21c950c6"
+    }
+}

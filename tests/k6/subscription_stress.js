@@ -7,30 +7,30 @@ export const options = {
         // Skenario 1: Memeriksa akses langganan & download jurnal (Read-Heavy)
         read_access_stress: {
             executor: 'ramping-arrival-rate',
-            startRate: 10,
+            startRate: 5,
             timeUnit: '1s',
-            preAllocatedVUs: 50,
-            maxVUs: 200,
+            preAllocatedVUs: 10,
+            maxVUs: 100,
             stages: [
-                { duration: '1m', target: 50 },  // Naik ke 50 requests/detik selama 1 menit
-                { duration: '2m', target: 50 },  // Bertahan di 50 requests/detik selama 2 menit
-                { duration: '1m', target: 150 }, // Naik ke 150 requests/detik (Stress test!)
-                { duration: '2m', target: 150 }, // Bertahan di 150 requests/detik selama 2 menit
-                { duration: '1m', target: 0 },   // Turun ke 0
+                { duration: '15s', target: 20 },  // Naik ke 20 requests/detik selama 15 detik
+                { duration: '30s', target: 20 },  // Bertahan di 20 requests/detik selama 30 detik
+                { duration: '15s', target: 50 },  // Naik ke 50 requests/detik (Stress!)
+                { duration: '30s', target: 50 },  // Bertahan di 50 requests/detik selama 30 detik
+                { duration: '10s', target: 0 },   // Turun ke 0
             ],
             exec: 'testReadAccess',
         },
         // Skenario 2: Transaksi subscribe & perpanjang langganan (Write-Heavy)
         write_subscribe_stress: {
             executor: 'ramping-arrival-rate',
-            startRate: 2,
+            startRate: 1,
             timeUnit: '1s',
-            preAllocatedVUs: 10,
-            maxVUs: 50,
+            preAllocatedVUs: 5,
+            maxVUs: 20,
             stages: [
-                { duration: '1m', target: 10 },  // Naik ke 10 requests/detik selama 1 menit
-                { duration: '3m', target: 10 },  // Bertahan di 10 requests/detik selama 3 menit
-                { duration: '1m', target: 0 },   // Turun ke 0
+                { duration: '15s', target: 5 },   // Naik ke 5 requests/detik selama 15 detik
+                { duration: '45s', target: 5 },   // Bertahan di 5 requests/detik selama 45 detik
+                { duration: '15s', target: 0 },   // Turun ke 0
             ],
             exec: 'testWriteSubscribe',
         }

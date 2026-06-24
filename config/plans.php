@@ -1,6 +1,11 @@
 <?php
 
 return [
+    // Toggle: aktifkan/nonaktifkan Redis cache untuk subscription
+    'cache_enabled'     => env('SUBSCRIPTION_CACHE_ENABLED', true),
+    'cache_prefix'      => env('SUBSCRIPTION_CACHE_PREFIX', 'subscription'),
+    'cache_ttl_minutes' => env('SUBSCRIPTION_CACHE_TTL', 5),
+
     'available' => [
         'monthly',
         'yearly',
