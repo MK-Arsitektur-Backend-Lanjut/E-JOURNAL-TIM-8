@@ -24,12 +24,12 @@
 
 ### Endpoint yang Diuji
 
-- `GET /api/v1/documents` — daftar dokumen
-- `GET /api/v1/documents?year=2023` — filter tahun
-- `GET /api/v1/documents?tag=teknologi` — filter tag
-- `GET /api/v1/documents/{id}` — detail dokumen (ID acak 1–100)
-- `GET /api/v1/tags` — daftar tag
-- `GET /api/v1/authors` — daftar penulis
+- `GET /api/v1/documents` - daftar dokumen
+- `GET /api/v1/documents?year=2023` - filter tahun
+- `GET /api/v1/documents?tag=teknologi` - filter tag
+- `GET /api/v1/documents/{id}` - detail dokumen (ID acak 1–100)
+- `GET /api/v1/tags` - daftar tag
+- `GET /api/v1/authors` - daftar penulis
 
 ---
 
