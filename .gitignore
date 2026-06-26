@@ -33,3 +33,5 @@ rr
 stress-*.json
 after-optimization.json
 baseline.json
+rr
+.rr.yaml

@@ -10,10 +10,6 @@ use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
-    public function __construct(private readonly DocumentRepositoryInterface $repository)
-    {
-    }
-
     public function index(): JsonResponse
     {
         $filters = request()->only(['title', 'year', 'author', 'tag']);
