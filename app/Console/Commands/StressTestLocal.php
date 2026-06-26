@@ -35,7 +35,7 @@ class StressTestLocal extends Command
         // Menargetkan Laravel Octane / RoadRunner yang berjalan di port 8000 dengan query acak
         
         $userOption = $this->option('users');
-        $loads = $userOption ? [(int) $userOption] : [10, 50, 100, 200, 500, 1000]; // Skenario jumlah user bersamaan
+        $loads = $userOption ? [(int) $userOption] : [10, 50, 100, 200, 500, 1000, 2000]; // Skenario jumlah user bersamaan
         
         $this->info("URL Target (Laravel Octane): http://127.0.0.1:8000/api/v1/documents/search (dengan filter pencarian acak)\n");
 
@@ -51,7 +51,6 @@ class StressTestLocal extends Command
                 // Variasi parameter untuk simulasi pencarian acak realistik
                 $years = [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
                 $alphabets = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'v', 'w', 'y', 'z'];
-                $keywords = ['analysis', 'system', 'journal', 'data', 'design', 'web', 'framework', 'database'];
                 
                 for ($i = 0; $i < $concurrentUsers; $i++) {
                     $params = [];
@@ -64,7 +63,7 @@ class StressTestLocal extends Command
                     } elseif ($type === 3) {
                         $params['author'] = $alphabets[array_rand($alphabets)];
                     } elseif ($type === 4) {
-                        $params['abstract'] = $keywords[array_rand($keywords)];
+                        $params['abstract'] = $alphabets[array_rand($alphabets)];
                     } elseif ($type === 5) {
                         $params['year'] = $years[array_rand($years)];
                         $params['title'] = $alphabets[array_rand($alphabets)];
@@ -128,6 +127,5 @@ class StressTestLocal extends Command
             sleep(2);
         }
         
-        $this->info("Pengujian Selesai! Gunakan angka Total Waktu di atas untuk menggambar grafik di Excel.");
     }
 }
